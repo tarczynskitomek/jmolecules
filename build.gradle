@@ -1,0 +1,62 @@
+plugins {
+    id 'org.springframework.boot' version '2.6.3'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+    id 'groovy'
+    id 'com.revolut.jooq-docker' version '0.3.5'
+}
+
+group = 'it.tarczynski'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    set('testcontainersVersion', "1.16.3")
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-jooq'
+
+    implementation 'org.flywaydb:flyway-core'
+
+    implementation platform('org.jmolecules:jmolecules-bom:2021.2.2')
+    implementation 'org.jmolecules:jmolecules-ddd'
+    implementation 'org.jmolecules:jmolecules-events'
+    implementation 'org.jmolecules.integrations:jmolecules-spring'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    jdbc 'org.postgresql:postgresql'
+    runtimeOnly 'org.postgresql:postgresql'
+
+    implementation 'org.testcontainers:postgresql'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.codehaus.groovy:groovy-all:3.0.9'
+    testImplementation 'org.spockframework:spock-spring:2.0-groovy-3.0'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
+    }
+}
+
+tasks {
+    generateJooqClasses {
+        schemas = ['public']
+        basePackageName = 'it.tarczynski.jmolecules.infrastructure.generated'
+    }
+}
+
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
