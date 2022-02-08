@@ -20,4 +20,12 @@ public class TimeSlot {
     public TimeSlotId id() {
         return id;
     }
+
+    public Instant from() {
+        return from;
+    }
+
+    public Instant to() {
+        return to;
+    }
 }

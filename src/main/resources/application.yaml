@@ -5,4 +5,6 @@ spring:
     username: postgres
     password: postgres
 
-logging.level.org.springframework.transaction: DEBUG
+logging:
+  level:
+    org.jooq: DEBUG

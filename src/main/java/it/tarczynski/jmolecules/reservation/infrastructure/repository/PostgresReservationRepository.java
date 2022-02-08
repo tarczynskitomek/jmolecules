@@ -27,7 +27,7 @@ public class PostgresReservationRepository implements ReservationRepository {
         final var record = context.newRecord(RESERVATIONS);
         record.setId(reservation.id().value().toString());
         record.setResourceId(reservation.resourceId().value().toString());
-        record.setTimeslotId(reservation.resourceId().value().toString());
+        record.setTimeslotId(reservation.timeSlotId().value().toString());
         record.setCreatedAt(reservation.createdAt().atOffset(ZoneOffset.UTC));
         record.store();
         return reservation;
