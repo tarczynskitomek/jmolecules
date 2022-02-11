@@ -4,6 +4,7 @@ import it.tarczynski.jmolecules.reservable.domain.ResourceId;
 import it.tarczynski.jmolecules.reservation.domain.Reservation;
 import it.tarczynski.jmolecules.reservation.domain.ReservationId;
 import it.tarczynski.jmolecules.reservation.domain.ReservationRepository;
+import it.tarczynski.jmolecules.reservation.domain.ReservationValidator;
 import it.tarczynski.jmolecules.reservation.domain.event.ReservationConfirmedEvent;
 import it.tarczynski.jmolecules.reservation.domain.event.ReservationCreatedEvent;
 import it.tarczynski.jmolecules.reservation.domain.event.ReservationPlacedEvent;
@@ -16,16 +17,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 @AllArgsConstructor
-public class ReservationFacade {
+public class ReservationCommandFacade {
 
-    public static final Logger LOG = LoggerFactory.getLogger(ReservationFacade.class);
+    public static final Logger LOG = LoggerFactory.getLogger(ReservationCommandFacade.class);
 
     private final TimeMachine timeMachine;
     private final ReservationRepository reservationRepository;
+    private final ReservationValidator reservationValidator;
     private final EventBus eventBus;
 
     @Transactional
     public Reservation create(ResourceId resourceId, TimeSlotId timeSlotId) {
+        reservationValidator.canCreateFor(resourceId, timeSlotId);
         LOG.info("Creating reservation for resource [{}] and timeslot [{}]", resourceId.value(), timeSlotId.value());
         final var id = ReservationId.next();
         final var createdAt = timeMachine.now();

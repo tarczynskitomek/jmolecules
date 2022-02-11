@@ -1,6 +1,6 @@
 package it.tarczynski.jmolecules.reservation.infrastructure.web;
 
-import it.tarczynski.jmolecules.reservation.application.ReservationFacade;
+import it.tarczynski.jmolecules.reservation.application.ReservationCommandFacade;
 import it.tarczynski.jmolecules.reservation.application.dto.CreateReservationRequest;
 import it.tarczynski.jmolecules.reservation.application.dto.ReservationResponse;
 import lombok.AllArgsConstructor;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class ReservationController {
 
-    private final ReservationFacade reservationFacade;
+    private final ReservationCommandFacade reservationFacade;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)

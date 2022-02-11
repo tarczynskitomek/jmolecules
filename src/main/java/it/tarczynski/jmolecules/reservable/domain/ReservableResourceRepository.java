@@ -7,4 +7,6 @@ public interface ReservableResourceRepository {
     ReservableResource update(ReservableResource resource);
 
     ReservableResource get(ResourceId id);
+
+    boolean exists(ResourceId resourceId);
 }

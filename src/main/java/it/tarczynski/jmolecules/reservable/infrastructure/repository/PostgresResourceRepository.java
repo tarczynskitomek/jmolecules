@@ -5,6 +5,7 @@ import it.tarczynski.jmolecules.reservable.domain.ReservableResource;
 import it.tarczynski.jmolecules.reservable.domain.ReservableResourceRepository;
 import it.tarczynski.jmolecules.reservable.domain.ReservableTokens;
 import it.tarczynski.jmolecules.reservable.domain.ResourceId;
+import it.tarczynski.jmolecules.reservable.infrastructure.exception.ExpectedResourceNotFoundException;
 import lombok.AllArgsConstructor;
 import org.jooq.DSLContext;
 
@@ -55,10 +56,15 @@ public class PostgresResourceRepository implements ReservableResourceRepository 
         );
     }
 
+    @Override
+    public boolean exists(ResourceId resourceId) {
+        return context.fetchExists(RESERVABLE_RESOURCES, RESERVABLE_RESOURCES.ID.eq(resourceId.value().toString()));
+    }
+
     private ReservableResourcesRecord getResourceRecord(ResourceId id) {
         final var record = context.fetchOne(RESERVABLE_RESOURCES, RESERVABLE_RESOURCES.ID.eq(id.value().toString()));
         if (Objects.isNull(record)) {
-            throw new IllegalStateException("Missing resource [%s]".formatted(id.value()));
+            throw new ExpectedResourceNotFoundException(id);
         }
         return record;
     }
