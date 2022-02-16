@@ -5,12 +5,13 @@ import it.tarczynski.jmolecules.test.ability.ReservationAbility
 import org.springframework.http.RequestEntity
 import org.springframework.http.ResponseEntity
 
-import static org.springframework.http.HttpStatus.OK
-import static org.springframework.http.HttpStatus.PRECONDITION_FAILED
+import static org.springframework.http.HttpStatus.*
 
 class ReservationIntegrationSpec
         extends BaseIntegrationSpec
         implements ReservationAbility {
+
+    public static final int UNAVAILABLE_TOKENS = 0
 
     def 'should create a reservation'() {
         given: 'there exists a reservable resource'
@@ -85,6 +86,32 @@ class ReservationIntegrationSpec
                     .hasErrorMessage("Precondition failed. Expected time slot [$timeSlotId] does not exist")
 
         and: 'no new reservation is created'
+            withReservationResponse(reservationsResponse)
+                    .hasStatus(OK)
+                    .isEmpty()
+    }
+
+    def "should not create a reservation if resource is unavailable"() {
+        given: 'a timeslot'
+            String timeSlotId = aTimeSlot()
+
+        and: 'an unavailable resource'
+            String resourceId = aReservableResource(UNAVAILABLE_TOKENS)
+
+        when: 'a request to create a reservation is executed'
+            ResponseEntity<Map> creationResponse = execute(
+                    reservationRequest(resourceId, timeSlotId)
+            )
+
+        and:
+            ResponseEntity<Map> reservationsResponse = fetchReservations()
+
+        then:
+            withReservationResponse(creationResponse)
+                    .hasStatus(TOO_MANY_REQUESTS)
+                    .hasErrorMessage("Resource [$resourceId] exhausted")
+
+        and:
             withReservationResponse(reservationsResponse)
                     .hasStatus(OK)
                     .isEmpty()

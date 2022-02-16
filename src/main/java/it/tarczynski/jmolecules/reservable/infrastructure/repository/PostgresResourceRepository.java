@@ -5,7 +5,7 @@ import it.tarczynski.jmolecules.reservable.domain.ReservableResource;
 import it.tarczynski.jmolecules.reservable.domain.ReservableResourceRepository;
 import it.tarczynski.jmolecules.reservable.domain.ReservableTokens;
 import it.tarczynski.jmolecules.reservable.domain.ResourceId;
-import it.tarczynski.jmolecules.reservable.infrastructure.exception.ExpectedResourceNotFoundException;
+import it.tarczynski.jmolecules.reservable.domain.exception.ExpectedResourceNotFoundException;
 import lombok.AllArgsConstructor;
 import org.jooq.DSLContext;
 

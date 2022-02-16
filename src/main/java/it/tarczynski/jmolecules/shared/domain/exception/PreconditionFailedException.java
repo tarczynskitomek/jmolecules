@@ -1,4 +1,4 @@
-package it.tarczynski.jmolecules.shared.infrastructure.exception;
+package it.tarczynski.jmolecules.shared.domain.exception;
 
 public class PreconditionFailedException extends RuntimeException {
 

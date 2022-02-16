@@ -1,6 +1,6 @@
-package it.tarczynski.jmolecules.timeslot.infrastructure.exception;
+package it.tarczynski.jmolecules.timeslot.domain.exception;
 
-import it.tarczynski.jmolecules.shared.infrastructure.exception.PreconditionFailedException;
+import it.tarczynski.jmolecules.shared.domain.exception.PreconditionFailedException;
 import it.tarczynski.jmolecules.timeslot.domain.TimeSlotId;
 
 public class ExpectedTimeSlotNotFoundException extends PreconditionFailedException {

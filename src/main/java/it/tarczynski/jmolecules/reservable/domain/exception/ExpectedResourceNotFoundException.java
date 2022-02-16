@@ -1,7 +1,7 @@
-package it.tarczynski.jmolecules.reservable.infrastructure.exception;
+package it.tarczynski.jmolecules.reservable.domain.exception;
 
 import it.tarczynski.jmolecules.reservable.domain.ResourceId;
-import it.tarczynski.jmolecules.shared.infrastructure.exception.PreconditionFailedException;
+import it.tarczynski.jmolecules.shared.domain.exception.PreconditionFailedException;
 
 public class ExpectedResourceNotFoundException extends PreconditionFailedException {
 

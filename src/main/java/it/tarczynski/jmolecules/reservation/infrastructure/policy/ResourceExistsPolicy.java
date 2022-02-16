@@ -2,7 +2,7 @@ package it.tarczynski.jmolecules.reservation.infrastructure.policy;
 
 import it.tarczynski.jmolecules.reservable.domain.ReservableResourceRepository;
 import it.tarczynski.jmolecules.reservable.domain.ResourceId;
-import it.tarczynski.jmolecules.reservable.infrastructure.exception.ExpectedResourceNotFoundException;
+import it.tarczynski.jmolecules.reservable.domain.exception.ExpectedResourceNotFoundException;
 import it.tarczynski.jmolecules.reservation.domain.ReservationCreationPolicy;
 import it.tarczynski.jmolecules.timeslot.domain.TimeSlotId;
 import lombok.AllArgsConstructor;

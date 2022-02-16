@@ -4,7 +4,7 @@ import it.tarczynski.jmolecules.reservable.domain.ResourceId;
 import it.tarczynski.jmolecules.reservation.domain.ReservationCreationPolicy;
 import it.tarczynski.jmolecules.timeslot.domain.TimeSlotId;
 import it.tarczynski.jmolecules.timeslot.domain.TimeSlotRepository;
-import it.tarczynski.jmolecules.timeslot.infrastructure.exception.ExpectedTimeSlotNotFoundException;
+import it.tarczynski.jmolecules.timeslot.domain.exception.ExpectedTimeSlotNotFoundException;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

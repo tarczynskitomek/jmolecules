@@ -1,5 +1,6 @@
 package it.tarczynski.jmolecules.reservable.domain;
 
+import it.tarczynski.jmolecules.reservable.domain.exception.ReservableResourceExhaustedException;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import org.jmolecules.ddd.annotation.AggregateRoot;
@@ -18,6 +19,9 @@ public class ReservableResource {
     private final Instant createdAt;
 
     public ReservableResource reserve() {
+        if (!tokens.hasAvailableTokens()) {
+            throw new ReservableResourceExhaustedException(id);
+        }
         return new ReservableResource(id, tokens.reserve(), createdAt);
     }
 
