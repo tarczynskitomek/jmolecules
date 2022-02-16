@@ -9,4 +9,5 @@ public class CreateTimeSlotRequest {
 
     private Instant from;
     private Instant to;
+    private Integer tokens;
 }

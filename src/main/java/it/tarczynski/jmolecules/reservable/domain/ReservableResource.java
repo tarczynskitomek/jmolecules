@@ -1,6 +1,7 @@
 package it.tarczynski.jmolecules.reservable.domain;
 
 import it.tarczynski.jmolecules.reservable.domain.exception.ReservableResourceExhaustedException;
+import it.tarczynski.jmolecules.shared.domain.ReservableTokens;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import org.jmolecules.ddd.annotation.AggregateRoot;

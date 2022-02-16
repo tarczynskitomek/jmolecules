@@ -3,11 +3,13 @@ package it.tarczynski.jmolecules.reservable.infrastructure.repository;
 import it.tarczynski.jmolecules.infrastructure.generated.tables.records.ReservableResourcesRecord;
 import it.tarczynski.jmolecules.reservable.domain.ReservableResource;
 import it.tarczynski.jmolecules.reservable.domain.ReservableResourceRepository;
-import it.tarczynski.jmolecules.reservable.domain.ReservableTokens;
 import it.tarczynski.jmolecules.reservable.domain.ResourceId;
 import it.tarczynski.jmolecules.reservable.domain.exception.ExpectedResourceNotFoundException;
+import it.tarczynski.jmolecules.shared.domain.ReservableTokens;
 import lombok.AllArgsConstructor;
 import org.jooq.DSLContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.ZoneOffset;
 import java.util.Objects;
@@ -17,6 +19,8 @@ import static it.tarczynski.jmolecules.infrastructure.generated.tables.Reservabl
 
 @AllArgsConstructor
 public class PostgresResourceRepository implements ReservableResourceRepository {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PostgresResourceRepository.class);
 
     private final DSLContext context;
 
@@ -34,11 +38,13 @@ public class PostgresResourceRepository implements ReservableResourceRepository 
 
     @Override
     public ReservableResource update(ReservableResource resource) {
-        final var record = getResourceRecord(resource.id());
-        record.setTokensAvailable(resource.tokens().available());
-        record.setTokensReserved(resource.tokens().reserved());
-        record.setTokensTaken(resource.tokens().taken());
-        record.store();
+        final int recordsUpdated = context.update(RESERVABLE_RESOURCES)
+                .set(RESERVABLE_RESOURCES.TOKENS_AVAILABLE, resource.tokens().available())
+                .set(RESERVABLE_RESOURCES.TOKENS_RESERVED, resource.tokens().reserved())
+                .set(RESERVABLE_RESOURCES.TOKENS_TAKEN, resource.tokens().taken())
+                .where(RESERVABLE_RESOURCES.ID.eq(resource.id().value().toString()))
+                .execute();
+        LOG.info("Updated resource [{}], records updated [{}]", resource.id().value(), recordsUpdated);
         return resource;
     }
 

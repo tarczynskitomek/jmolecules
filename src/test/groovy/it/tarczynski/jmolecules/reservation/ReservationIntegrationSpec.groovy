@@ -5,13 +5,15 @@ import it.tarczynski.jmolecules.test.ability.ReservationAbility
 import org.springframework.http.RequestEntity
 import org.springframework.http.ResponseEntity
 
-import static org.springframework.http.HttpStatus.*
+import static org.springframework.http.HttpStatus.OK
+import static org.springframework.http.HttpStatus.PRECONDITION_FAILED
+import static org.springframework.http.HttpStatus.TOO_MANY_REQUESTS
 
 class ReservationIntegrationSpec
         extends BaseIntegrationSpec
         implements ReservationAbility {
 
-    public static final int UNAVAILABLE_TOKENS = 0
+    private static final int UNAVAILABLE_TOKENS = 0
 
     def 'should create a reservation'() {
         given: 'there exists a reservable resource'
@@ -35,6 +37,48 @@ class ReservationIntegrationSpec
                     .hasId()
                     .hasSlotId(timeSlotId)
                     .hasResourceId(resourceId)
+    }
+
+    def 'creating a reservation should decrease resource availability'() {
+        given: 'a resource with a 2 tokens available'
+            String resourceId = aReservableResource(2)
+
+        and: 'an available slot'
+            String timeSlotId = aTimeSlot()
+
+        when: 'a reservation request is executed'
+            String reservationId = createReservationAndReturnId(reservationRequest(resourceId, timeSlotId))
+
+        and: 'we fetch a reservation'
+            ResponseEntity<Map> fetchResponse = fetchReservation(reservationId)
+
+        then: 'available capacity is decreased and a resource is reserved'
+            withReservationResponse(fetchResponse)
+                    .hasStatus(OK)
+                    .hasResourceWithAvailableCapacity(1)
+                    .hasResourceWithReservedCapacity(1)
+                    .hasResourceWithTakenCapacity(0)
+    }
+
+    def 'creating a reservation should decrease timeslot availability'() {
+        given: 'a resource'
+            String resourceId = aReservableResource()
+
+        and: 'a timeslot with 2 tokens available'
+            String timeSlotId = aTimeSlot(2)
+
+        when: 'reservation is created'
+            String reservationId = createReservationAndReturnId(reservationRequest(resourceId, timeSlotId))
+
+        and: 'an we get reservation data'
+            ResponseEntity<Map> fetchResponse = fetchReservation(reservationId)
+
+        then: 'available time slot capacity is decreased and reserved'
+            withReservationResponse(fetchResponse)
+                    .hasStatus(OK)
+                    .hasTimeSlotWithAvailableCapacity(1)
+                    .hasTimeSlotWithReservedCapacity(1)
+                    .hasTimeSlotWithTakenCapacity(0)
     }
 
     def 'should not create a reservation if resource does not exist'() {
@@ -115,5 +159,24 @@ class ReservationIntegrationSpec
             withReservationResponse(reservationsResponse)
                     .hasStatus(OK)
                     .isEmpty()
+    }
+
+    def 'should not create a reservation if time slot is unavailable'() {
+        given: 'a resource'
+            String resourceId = aReservableResource()
+
+        and: 'an unavailable time slot'
+            String timeSlotId = aTimeSlot(UNAVAILABLE_TOKENS)
+
+        and: 'a request to create a reservation'
+            RequestEntity<Map> reservationRequest = reservationRequest(resourceId, timeSlotId)
+
+        when: 'the request is executed'
+            ResponseEntity<Map> createResponse = execute(reservationRequest)
+
+        then: 'an error is returned'
+            withReservationResponse(createResponse)
+                    .hasStatus(TOO_MANY_REQUESTS)
+                    .hasErrorMessage("TimeSlot [$timeSlotId] already exhausted")
     }
 }

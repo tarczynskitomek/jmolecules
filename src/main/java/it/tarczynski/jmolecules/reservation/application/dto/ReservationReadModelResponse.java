@@ -1,10 +1,13 @@
 package it.tarczynski.jmolecules.reservation.application.dto;
 
+import it.tarczynski.jmolecules.reservation.domain.view.ReservableResourceReadModel;
 import it.tarczynski.jmolecules.reservation.domain.view.ReservationView;
+import it.tarczynski.jmolecules.reservation.domain.view.TimeSlotView;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -18,8 +21,8 @@ public class ReservationReadModelResponse {
     private final Instant createdAt;
     private final Instant placedAt;
     private final Instant confirmedAt;
-    private final ReservableResourceViewResponse resource;
-    private final TimeSlotViewResponse timeSlot;
+    private final ReservableResourceReadModelResponse resource;
+    private final TimeSlotReadModelResponse timeSlot;
 
     public static ReservationReadModelResponse from(ReservationView view) {
         return ReservationReadModelResponse.builder()
@@ -27,8 +30,28 @@ public class ReservationReadModelResponse {
                 .createdAt(view.createdAt())
                 .placedAt(view.placedAt())
                 .confirmedAt(view.confirmedAt())
-                .resource(new ReservableResourceViewResponse(view.resource().id().value()))
-                .timeSlot(new TimeSlotViewResponse(view.timeSlot().id().value()))
+                .resource(toResourceResponse(view.resource()))
+                .timeSlot(toTimeSlotResponse(view.timeSlot()))
                 .build();
+    }
+
+    @NotNull
+    private static TimeSlotReadModelResponse toTimeSlotResponse(TimeSlotView timeSlotView) {
+        return new TimeSlotReadModelResponse(
+                timeSlotView.id().value(),
+                timeSlotView.tokens().available(),
+                timeSlotView.tokens().reserved(),
+                timeSlotView.tokens().taken()
+        );
+    }
+
+    @NotNull
+    private static ReservableResourceReadModelResponse toResourceResponse(ReservableResourceReadModel resourceView) {
+        return new ReservableResourceReadModelResponse(
+                resourceView.id().value(),
+                resourceView.tokens().available(),
+                resourceView.tokens().reserved(),
+                resourceView.tokens().taken()
+        );
     }
 }

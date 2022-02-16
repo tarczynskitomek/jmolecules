@@ -1,8 +1,10 @@
-package it.tarczynski.jmolecules.reservable.domain;
+package it.tarczynski.jmolecules.shared.domain;
 
 import lombok.AllArgsConstructor;
+import lombok.ToString;
 import org.jmolecules.ddd.annotation.ValueObject;
 
+@ToString
 @ValueObject
 @AllArgsConstructor
 public class ReservableTokens {
@@ -15,7 +17,7 @@ public class ReservableTokens {
         this(available, 0, 0);
     }
 
-    ReservableTokens reserve() {
+    public ReservableTokens reserve() {
         if (available == 0) throw new IllegalStateException("Already exhausted");
         return new ReservableTokens(available - 1, reserved + 1, taken);
     }

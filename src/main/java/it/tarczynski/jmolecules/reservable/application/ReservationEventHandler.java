@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 @AllArgsConstructor
 public class ReservationEventHandler {
 
-    public static final Logger LOG = LoggerFactory.getLogger(ReservationEventHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ReservationEventHandler.class);
 
     private final ReservableResourceRepository resourceRepository;
 

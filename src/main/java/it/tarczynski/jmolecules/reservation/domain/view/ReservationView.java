@@ -10,5 +10,5 @@ public record ReservationView(
         Instant placedAt,
         Instant confirmedAt,
         TimeSlotView timeSlot,
-        ReservableResourceView resource) {
+        ReservableResourceReadModel resource) {
 }

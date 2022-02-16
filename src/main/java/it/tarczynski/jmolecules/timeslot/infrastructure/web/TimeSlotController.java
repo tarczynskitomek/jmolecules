@@ -25,9 +25,7 @@ public class TimeSlotController {
     )
     @ResponseStatus(HttpStatus.CREATED)
     public TimeSlotResponse createTimeSlot(@RequestBody CreateTimeSlotRequest request) {
-        final var from = request.getFrom();
-        final var to = request.getTo();
-        final var timeSlot = timeSlotFacade.create(from, to);
+        final var timeSlot = timeSlotFacade.create(request);
         return TimeSlotResponse.from(timeSlot);
     }
 }

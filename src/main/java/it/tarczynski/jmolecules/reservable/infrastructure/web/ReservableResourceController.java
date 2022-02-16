@@ -2,7 +2,7 @@ package it.tarczynski.jmolecules.reservable.infrastructure.web;
 
 import it.tarczynski.jmolecules.reservable.application.dto.CreateReservableResourceRequest;
 import it.tarczynski.jmolecules.reservable.application.dto.ReservableResourceResponse;
-import it.tarczynski.jmolecules.reservable.domain.ReservableTokens;
+import it.tarczynski.jmolecules.shared.domain.ReservableTokens;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

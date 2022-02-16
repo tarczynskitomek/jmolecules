@@ -62,10 +62,10 @@ trait ReservationAbility {
         response.body.id
     }
 
-    String aTimeSlot() {
+    String aTimeSlot(int tokens = 5) {
         RequestEntity<Map> request = RequestEntity
                 .post('/timeslots')
-                .body([from: '2022-02-06T07:00:00.000Z', to: '2022-02-06T09:00:00.000Z'])
+                .body([from: '2022-02-06T07:00:00.000Z', to: '2022-02-06T09:00:00.000Z', tokens: tokens])
         ResponseEntity<Map> response = restTemplate.exchange(request, Map)
         assert response.statusCode == CREATED
         response.body.id
@@ -106,4 +106,33 @@ trait ReservationAbility {
         this
     }
 
+    ReservationAbility hasResourceWithAvailableCapacity(int expected) {
+        assert response.body.resource.availableTokens == expected
+        this
+    }
+
+    ReservationAbility hasResourceWithReservedCapacity(int expected) {
+        assert response.body.resource.reservedTokens == expected
+        this
+    }
+
+    ReservationAbility hasResourceWithTakenCapacity(int expected) {
+        assert response.body.resource.takenTokens == expected
+        this
+    }
+
+    ReservationAbility hasTimeSlotWithAvailableCapacity(int expected) {
+        assert response.body.timeSlot.availableTokens == expected
+        this
+    }
+
+    ReservationAbility hasTimeSlotWithReservedCapacity(int expected) {
+        assert response.body.timeSlot.reservedTokens == expected
+        this
+    }
+
+    ReservationAbility hasTimeSlotWithTakenCapacity(int expected) {
+        assert response.body.timeSlot.takenTokens == expected
+        this
+    }
 }
