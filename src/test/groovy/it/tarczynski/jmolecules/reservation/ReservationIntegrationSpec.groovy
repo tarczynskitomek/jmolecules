@@ -103,15 +103,15 @@ class ReservationIntegrationSpec
                     reservationRequest(resourceId, timeSlotId)
             )
 
-        and:
+        and: 'and we fetch all reservations'
             ResponseEntity<Map> reservationsResponse = fetchReservations()
 
-        then:
+        then: 'an error is returned indicating that the resource has already been exhausted'
             withReservationResponse(creationResponse)
                     .hasStatus(TOO_MANY_REQUESTS)
                     .hasErrorMessage("Resource [$resourceId] exhausted")
 
-        and:
+        and: 'no new reservation is created'
             withReservationResponse(reservationsResponse)
                     .hasStatus(OK)
                     .isEmpty()
