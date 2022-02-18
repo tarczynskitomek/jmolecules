@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import org.jmolecules.ddd.annotation.AggregateRoot;
 
 import java.time.Instant;
+import java.util.Objects;
 
 @AggregateRoot
 @AllArgsConstructor
@@ -34,6 +35,7 @@ public class Reservation {
     }
 
     public Reservation place(Instant placedAt) {
+        if (!Objects.isNull(this.placedAt)) throw new IllegalStateException("Already placed");
         return new Reservation(id, resourceId, timeSlotId, createdAt, placedAt, null);
     }
 

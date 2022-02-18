@@ -34,6 +34,16 @@ public class PostgresReservationRepository implements ReservationRepository {
     }
 
     @Override
+    public Reservation update(Reservation reservation) {
+        context.update(RESERVATIONS)
+                .set(RESERVATIONS.PLACED_AT, toOffsetDateTimeNullable(reservation.placedAt()))
+                .set(RESERVATIONS.CONFIRMED_AT, toOffsetDateTimeNullable(reservation.confirmedAt()))
+                .where(RESERVATIONS.ID.eq(reservation.id().value().toString()))
+                .execute();
+        return reservation;
+    }
+
+    @Override
     public Reservation get(ReservationId id) {
         final var record = context.fetchOne(RESERVATIONS, RESERVATIONS.ID.eq(id.value().toString()));
         if (record == null) {
@@ -51,5 +61,11 @@ public class PostgresReservationRepository implements ReservationRepository {
 
     private Instant toInstantNullable(OffsetDateTime nullableTime) {
         return nullableTime != null ? nullableTime.toInstant() : null;
+    }
+
+    private OffsetDateTime toOffsetDateTimeNullable(Instant nullableInstant) {
+        return nullableInstant != null
+                ? nullableInstant.atOffset(ZoneOffset.UTC)
+                : null;
     }
 }

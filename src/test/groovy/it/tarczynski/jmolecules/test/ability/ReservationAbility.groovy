@@ -24,6 +24,25 @@ trait ReservationAbility {
                 .body([resourceId: resourceId, timeSlotId: timeSlotId])
     }
 
+    String createReservationAndReturnId(Map<String, Integer> config = [availableResourceTokens: 20, availableSlotTokens: 5]) {
+        String resourceId = aReservableResource(config.availableResourceTokens ?: 20)
+        String slotId = aTimeSlot(config.availableSlotTokens ?: 5)
+        createReservationAndReturnId(reservationRequest(resourceId, slotId))
+    }
+
+    RequestEntity<Map> placeReservationRequest(String reservationId) {
+        RequestEntity
+                .put("/reservations/$reservationId/place")
+                .body([commandId: UUID.randomUUID()])
+    }
+
+
+    RequestEntity<Map> confirmReservationRequest(String reservationId) {
+        RequestEntity
+                .put("/reservations/$reservationId/confirm")
+                .body([commandId: UUID.randomUUID()])
+    }
+
     String createReservationAndReturnId(RequestEntity<Map> request) {
         ResponseEntity<Map> response = execute(request)
         assert response.statusCode == CREATED
@@ -133,6 +152,16 @@ trait ReservationAbility {
 
     ReservationAbility hasTimeSlotWithTakenCapacity(int expected) {
         assert response.body.timeSlot.takenTokens == expected
+        this
+    }
+
+    ReservationAbility isPlaced() {
+        assert response.body.placedAt != null
+        this
+    }
+
+    ReservationAbility isConfirmed() {
+        assert response.body.confirmedAt != null
         this
     }
 }

@@ -5,6 +5,7 @@ import it.tarczynski.jmolecules.test.ability.ReservationAbility
 import org.springframework.http.RequestEntity
 import org.springframework.http.ResponseEntity
 
+import static org.springframework.http.HttpStatus.ACCEPTED
 import static org.springframework.http.HttpStatus.OK
 import static org.springframework.http.HttpStatus.PRECONDITION_FAILED
 import static org.springframework.http.HttpStatus.TOO_MANY_REQUESTS
@@ -178,5 +179,76 @@ class ReservationIntegrationSpec
             withReservationResponse(createResponse)
                     .hasStatus(TOO_MANY_REQUESTS)
                     .hasErrorMessage("TimeSlot [$timeSlotId] already exhausted")
+    }
+
+    def 'should place created reservation'() {
+        given: 'a reservation'
+            String reservationId = createReservationAndReturnId()
+
+        when: 'the reservation is placed'
+            ResponseEntity<Map> response = execute(placeReservationRequest(reservationId))
+
+        then: 'saved reservation is marked as placed'
+            withReservationResponse(response).hasStatus(ACCEPTED)
+
+        and:
+            withReservationResponse(fetchReservation(reservationId))
+                    .hasStatus(OK)
+                    .isPlaced()
+    }
+
+    def 'should confirm reservation'() {
+        given: 'a reservation'
+            String reservationId = createReservationAndReturnId()
+
+        and: 'that has been placed'
+            execute(placeReservationRequest(reservationId))
+
+        when: 'the reservation is confirmed'
+            ResponseEntity<Map> response = execute(confirmReservationRequest(reservationId))
+
+        then: 'the operation is successful'
+            withReservationResponse(response).hasStatus(ACCEPTED)
+
+        and: 'saved reservation is marked as confirmed'
+            withReservationResponse(fetchReservation(reservationId))
+                    .hasStatus(OK)
+                    .isConfirmed()
+    }
+
+    def 'confirming a reservation should reduce reserved and increase taken capacity on resource'() {
+        given: 'a reservation'
+            String reservationId = createReservationAndReturnId(availableResourceTokens: 2)
+
+        and: 'that has been placed'
+            execute(placeReservationRequest(reservationId))
+
+        when: 'the reservation is confirmed'
+            execute(confirmReservationRequest(reservationId))
+
+        then: 'reserved capacity is reduced and taken increased'
+            withReservationResponse(fetchReservation(reservationId))
+                    .hasStatus(OK)
+                    .hasResourceWithAvailableCapacity(1)
+                    .hasResourceWithReservedCapacity(0)
+                    .hasResourceWithTakenCapacity(1)
+    }
+
+    def 'confirming a reservation should reduce reserved and increase taken capacity on time slot'() {
+        given: 'a reservation'
+            String reservationId = createReservationAndReturnId(availableSlotTokens: 2)
+
+        and: 'that has been placed'
+            execute(placeReservationRequest(reservationId))
+
+        when: 'the reservation is confirmed'
+            execute(confirmReservationRequest(reservationId))
+
+        then: 'reserved capacity on time slot is reduced and taken increased'
+            withReservationResponse(fetchReservation(reservationId))
+                    .hasStatus(OK)
+                    .hasTimeSlotWithAvailableCapacity(1)
+                    .hasTimeSlotWithReservedCapacity(0)
+                    .hasTimeSlotWithTakenCapacity(1)
     }
 }

@@ -1,5 +1,6 @@
 package it.tarczynski.jmolecules.timeslot.application;
 
+import it.tarczynski.jmolecules.reservation.domain.event.ReservationConfirmedEvent;
 import it.tarczynski.jmolecules.reservation.domain.event.ReservationCreatedEvent;
 import it.tarczynski.jmolecules.timeslot.domain.TimeSlotRepository;
 import lombok.AllArgsConstructor;
@@ -18,5 +19,11 @@ public class ReservationEventHandler {
         final var timeSlot = timeSlotRepository.get(event.timeSlotId());
         final var reserved = timeSlot.reserve();
         timeSlotRepository.update(reserved);
+    }
+
+    public void handle(ReservationConfirmedEvent event) {
+        final var timeSlot = timeSlotRepository.get(event.timeSlotId());
+        final var confirmed = timeSlot.confirmReservation();
+        timeSlotRepository.update(confirmed);
     }
 }

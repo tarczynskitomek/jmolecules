@@ -1,6 +1,7 @@
 package it.tarczynski.jmolecules.reservable.application;
 
 import it.tarczynski.jmolecules.reservable.domain.ReservableResourceRepository;
+import it.tarczynski.jmolecules.reservation.domain.event.ReservationConfirmedEvent;
 import it.tarczynski.jmolecules.reservation.domain.event.ReservationCreatedEvent;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -19,5 +20,11 @@ public class ReservationEventHandler {
         final var reservedResource = resource.reserve();
         LOG.info("Updated resource [{}] availability", resource.id().value());
         resourceRepository.update(reservedResource);
+    }
+
+    public void handle(ReservationConfirmedEvent event) {
+        final var resource = resourceRepository.get(event.resourceId());
+        final var confirmedResource = resource.confirmReservation();
+        resourceRepository.update(confirmedResource);
     }
 }

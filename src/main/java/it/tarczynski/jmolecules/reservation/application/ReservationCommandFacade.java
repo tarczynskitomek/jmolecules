@@ -44,7 +44,7 @@ public class ReservationCommandFacade {
         final var reservation = reservationRepository.get(id);
         final var placedAt = timeMachine.now();
         final var placed = reservation.place(placedAt);
-        final var saved = reservationRepository.save(placed);
+        final var saved = reservationRepository.update(placed);
         eventBus.publish(new ReservationPlacedEvent(saved));
         return saved;
     }
@@ -54,7 +54,7 @@ public class ReservationCommandFacade {
         final var reservation = reservationRepository.get(id);
         final var confirmedAt = timeMachine.now();
         final var confirmed = reservation.confirm(confirmedAt);
-        final var saved = reservationRepository.save(confirmed);
+        final var saved = reservationRepository.update(confirmed);
         eventBus.publish(new ReservationConfirmedEvent(saved));
         return saved;
     }

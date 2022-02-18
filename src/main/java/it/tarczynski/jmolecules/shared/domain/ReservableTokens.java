@@ -17,9 +17,14 @@ public class ReservableTokens {
         this(available, 0, 0);
     }
 
-    public ReservableTokens reserve() {
+    public ReservableTokens reserveOne() {
         if (available == 0) throw new IllegalStateException("Already exhausted");
         return new ReservableTokens(available - 1, reserved + 1, taken);
+    }
+
+    public ReservableTokens confirmOne() {
+        if (reserved == 0) throw new IllegalStateException("No tokens reserved");
+        return new ReservableTokens(available, reserved - 1, taken + 1);
     }
 
     public boolean hasAvailableTokens() {
@@ -36,5 +41,9 @@ public class ReservableTokens {
 
     public int taken() {
         return taken;
+    }
+
+    public boolean hasReserved() {
+        return reserved > 0;
     }
 }

@@ -38,6 +38,11 @@ public class TimeSlot {
 
     public TimeSlot reserve() {
         if (!tokens.hasAvailableTokens()) throw new TimeSlotExhaustedException(id);
-        return new TimeSlot(id, from, to, tokens.reserve());
+        return new TimeSlot(id, from, to, tokens.reserveOne());
+    }
+
+    public TimeSlot confirmReservation() {
+        if (!tokens.hasReserved()) throw new IllegalStateException("Not reserved");
+        return new TimeSlot(id, from, to, tokens.confirmOne());
     }
 }

@@ -23,7 +23,11 @@ public class ReservableResource {
         if (!tokens.hasAvailableTokens()) {
             throw new ReservableResourceExhaustedException(id);
         }
-        return new ReservableResource(id, tokens.reserve(), createdAt);
+        return new ReservableResource(id, tokens.reserveOne(), createdAt);
+    }
+
+    public ReservableResource confirmReservation() {
+        return new ReservableResource(id, tokens.confirmOne(), createdAt);
     }
 
     public ResourceId id() {
