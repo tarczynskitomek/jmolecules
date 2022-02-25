@@ -3,6 +3,7 @@ package it.tarczynski.jmolecules.reservation.application;
 import it.tarczynski.jmolecules.reservable.domain.ResourceId;
 import it.tarczynski.jmolecules.reservation.domain.Reservation;
 import it.tarczynski.jmolecules.reservation.domain.ReservationId;
+import it.tarczynski.jmolecules.reservation.domain.ReservationOperation;
 import it.tarczynski.jmolecules.reservation.domain.ReservationRepository;
 import it.tarczynski.jmolecules.reservation.domain.ReservationValidator;
 import it.tarczynski.jmolecules.reservation.domain.event.ReservationConfirmedEvent;
@@ -10,6 +11,8 @@ import it.tarczynski.jmolecules.reservation.domain.event.ReservationCreatedEvent
 import it.tarczynski.jmolecules.reservation.domain.event.ReservationPlacedEvent;
 import it.tarczynski.jmolecules.shared.EventBus;
 import it.tarczynski.jmolecules.shared.TimeMachine;
+import it.tarczynski.jmolecules.shared.domain.ChangeLog;
+import it.tarczynski.jmolecules.shared.domain.CommandId;
 import it.tarczynski.jmolecules.timeslot.domain.TimeSlotId;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -40,12 +43,13 @@ public class ReservationCommandFacade {
     }
 
     @Transactional
-    public Reservation place(ReservationId id) {
+    public Reservation place(ReservationId id, CommandId commandId) {
+        reservationValidator.canPlaceFor(id, commandId);
         final var reservation = reservationRepository.get(id);
         final var placedAt = timeMachine.now();
         final var placed = reservation.place(placedAt);
         final var saved = reservationRepository.update(placed);
-        eventBus.publish(new ReservationPlacedEvent(saved));
+        eventBus.publish(new ReservationPlacedEvent(saved, commandId));
         return saved;
     }
 

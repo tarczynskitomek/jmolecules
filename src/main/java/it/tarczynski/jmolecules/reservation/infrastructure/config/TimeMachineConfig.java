@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class TimeMachineConfiguration {
+public class TimeMachineConfig {
 
     @Bean
     TimeMachine timeMachine() {

@@ -6,6 +6,7 @@ import it.tarczynski.jmolecules.reservation.application.dto.CreateReservationReq
 import it.tarczynski.jmolecules.reservation.application.dto.PlaceReservationRequest;
 import it.tarczynski.jmolecules.reservation.application.dto.ReservationResponse;
 import it.tarczynski.jmolecules.reservation.domain.ReservationId;
+import it.tarczynski.jmolecules.shared.domain.CommandId;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +52,7 @@ public class ReservationCommandController {
     public ReservationResponse place(@PathVariable UUID reservationId,
                                      @RequestBody PlaceReservationRequest request) {
         LOG.info("Received place reservation command [{}]", request.commandId());
-        final var placed = reservationFacade.place(new ReservationId(reservationId));
+        final var placed = reservationFacade.place(new ReservationId(reservationId), new CommandId(request.commandId()));
         return ReservationResponse.from(placed);
     }
 

@@ -2,7 +2,9 @@ package it.tarczynski.jmolecules.reservation.infrastructure.validation;
 
 import it.tarczynski.jmolecules.reservable.domain.ResourceId;
 import it.tarczynski.jmolecules.reservation.domain.ReservationCreationPolicy;
+import it.tarczynski.jmolecules.reservation.domain.ReservationId;
 import it.tarczynski.jmolecules.reservation.domain.ReservationValidator;
+import it.tarczynski.jmolecules.shared.domain.CommandId;
 import it.tarczynski.jmolecules.timeslot.domain.TimeSlotId;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -22,5 +24,10 @@ public class CompoundReservationValidator implements ReservationValidator {
         LOG.info("Validating resource [{}] and time slot [{}]", resourceId.value(), timeSlotId.value());
         creationPolicies.forEach(policy -> policy.canCreateFor(resourceId, timeSlotId));
         LOG.info("Validation passed, reservation can be created");
+    }
+
+    @Override
+    public void canPlaceFor(ReservationId id, CommandId commandId) {
+
     }
 }

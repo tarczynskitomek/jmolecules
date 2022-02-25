@@ -7,9 +7,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class ReservationEventListenerConfig {
+class TimeSlotReservationEventListenerConfig {
 
-    @Bean
+    @Bean("timeSlotReservationEventListener")
     ReservationEventListener reservationEventListener(TimeSlotRepository timeSlotRepository) {
         return new ReservationEventListener(
                 new ReservationEventHandler(timeSlotRepository)

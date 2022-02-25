@@ -6,9 +6,9 @@ import org.springframework.context.annotation.Configuration;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 @Configuration
-public class LocalPostgresConfiguration {
+public class LocalPostgresConfig {
 
-    public static final Logger LOG = LoggerFactory.getLogger(LocalPostgresConfiguration.class);
+    public static final Logger LOG = LoggerFactory.getLogger(LocalPostgresConfig.class);
 
     private static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:11.1")
             .withDatabaseName("postgres")
